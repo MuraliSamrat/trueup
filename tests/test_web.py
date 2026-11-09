@@ -74,7 +74,7 @@ def test_technician_report_to_owner_to_customer(web, pp):
     ret = c.get(f"/paypal/return?token={job.supplemental_order_id}")
     assert "Payment complete." in ret.text
     receipt = c.get(f"/jobs/{job.job_id}").text
-    for text in ("Faucet cartridge", "$111.00", job.mandate_sha256, "Settled with PayPal", "Photo from the job"):
+    for text in ("Faucet cartridge", "$111.00", job.mandate_sha256, "Customer approved the extra at PayPal; settled with PayPal, $111.00 charged", "Photo from the job"):
         assert text in receipt
 
 
@@ -164,3 +164,18 @@ def test_unexpected_errors_are_shown_not_500(web, pp):
     bad = c.post(f"/tech/jobs/{job.job_id}/report", auth=AUTH, data={"note": "x"},
                  files={"photo": ("p.heic", b"x", "image/heic")})
     assert "Photos must be JPEG" in bad.text
+
+
+def test_timeline_is_local_and_without_duplicates():
+    from types import SimpleNamespace
+    from app.main import timeline
+    job = SimpleNamespace(supplemental_order_id="O2", hold={"amount": "60.00", "currency": "USD"})
+    ev = [
+        {"at": "2026-11-09T14:08:00+00:00", "kind": "settled", "detail": '{"charged": "105.00"}'},
+        {"at": "2026-11-09T14:08:01+00:00", "kind": "paypal_approval_seen", "detail": "{}"},
+        {"at": "2026-11-09T14:09:00+00:00", "kind": "webhook:PAYMENT.CAPTURE.COMPLETED", "detail": '{"amount": "45.00"}'},
+    ]
+    rows = timeline(ev, job, "America/Los_Angeles")
+    assert [r["local"] for r in rows] == ["Nov 9, 6:08 AM", "Nov 9, 6:09 AM"]
+    assert rows[0]["label"] == "Customer approved the extra at PayPal; settled with PayPal, $105.00 charged"
+    assert rows[1]["label"] == "PayPal confirmed a $45.00 payment (verified webhook)"

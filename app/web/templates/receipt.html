@@ -49,9 +49,10 @@
 </table>
 
 <h2>Timeline</h2>
+<p class="muted">Times in the business's local time ({{ tz }}).</p>
 <ol class="timeline">
 {% for e in events %}
-  <li><time datetime="{{ e.at }}">{{ e.at[5:16]|replace("T", " ") }}</time><span>{{ e.label }}</span></li>
+  <li><time datetime="{{ e.at }}">{{ e.local }}</time><span>{{ e.label }}</span></li>
 {% endfor %}
 </ol>
 {% endblock %}

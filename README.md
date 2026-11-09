@@ -104,7 +104,7 @@ uvicorn app.main:build_web --factory --port 8000
 pytest
 ```
 
-121 tests, no network needed: a stateful fake of the PayPal endpoints (including request-id idempotency), a scripted chat model for the agents, the full job lifecycle across processes, concurrent settlement, MCP tools through a real MCP client on both protocol versions, and the web pages.
+122 tests, no network needed: a stateful fake of the PayPal endpoints (including request-id idempotency), a scripted chat model for the agents, the full job lifecycle across processes, concurrent settlement, MCP tools through a real MCP client on both protocol versions, and the web pages.
 
 ## Project layout
 
@@ -116,7 +116,7 @@ app/mcp_server/  FastMCP server, elicitation / sampling / progress helpers
 app/service.py   job lifecycle; app/store.py SQLite job store + timeline
 app/main.py      FastAPI: pages, PayPal return, webhooks, /mcp
 data/            price list and service catalog
-tests/           121 tests
+tests/           122 tests
 ```
 
 ## Limits and next steps

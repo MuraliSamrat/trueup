@@ -17,9 +17,11 @@ import json
 import logging
 import secrets
 import time
+from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Callable
+from zoneinfo import ZoneInfo
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
@@ -51,6 +53,45 @@ EVENT_LABELS = {
     "settled": "Settled with PayPal",
     "cancelled": "Cancelled; hold released",
 }
+
+
+WEBHOOK_LABELS = {
+    "PAYMENT.AUTHORIZATION.CREATED": "PayPal confirmed the hold (verified webhook)",
+    "PAYMENT.AUTHORIZATION.VOIDED": "PayPal confirmed the hold was released (verified webhook)",
+    "PAYMENT.CAPTURE.COMPLETED": "PayPal confirmed a ${amount} payment (verified webhook)",
+    "CHECKOUT.ORDER.APPROVED": "PayPal confirmed the customer's approval (verified webhook)",
+}
+# Recorded for debugging, but already told by another row (price_change_sent, hold_placed, settled).
+HIDDEN_EVENTS = {"owner_approved", "paypal_approval_seen"}
+
+
+def timeline(events: list[dict[str, Any]], job: Any, tz: str) -> list[dict[str, Any]]:
+    """Receipt timeline rows: plain labels, business local time, no duplicate bookkeeping rows."""
+    out = []
+    for e in events:
+        kind = e["kind"]
+        if kind in HIDDEN_EVENTS:
+            continue
+        try:
+            detail = json.loads(e["detail"]) if e["detail"] else {}
+        except ValueError:
+            detail = {}
+        detail = detail if isinstance(detail, dict) else {}
+        if kind.startswith("webhook:"):
+            label = WEBHOOK_LABELS.get(kind[8:], f"PayPal webhook: {kind[8:]}").replace(
+                "${amount}", f"${detail.get('amount')}" if detail.get("amount") else "")
+            label = label.replace(" a  payment", " a payment")
+        elif kind == "settled":
+            charged = detail.get("charged")
+            extra = job.supplemental_order_id is not None and Decimal(str(charged or 0)) > Decimal(job.hold["amount"])
+            label = ("Customer approved the extra at PayPal; " if extra else "") + (
+                f"settled with PayPal, ${charged} charged" if charged else "settled with PayPal")
+            label = label[0].upper() + label[1:]
+        else:
+            label = EVENT_LABELS.get(kind, kind)
+        at = datetime.fromisoformat(e["at"]).astimezone(ZoneInfo(tz))
+        out.append({**e, "label": label, "local": f"{at:%b} {at.day}, {at.hour % 12 or 12}:{at:%M %p}"})
+    return out
 
 
 def gauge_model(hold: Money, total: Money, action: str | None, mandate: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -166,8 +207,7 @@ def create_app(get_app: Callable[[], TrueUp], settings: Settings,
         job = app.store.get(job_id)
         if job is None:
             raise HTTPException(404, "No such job")
-        events = [{**e, "label": EVENT_LABELS.get(e["kind"], e["kind"].replace("webhook:", "PayPal webhook: "))}
-                  for e in app.store.events(job_id) if e["kind"] != "owner_approved"]  # shown by price_change_sent
+        events = timeline(app.store.events(job_id), job, app.catalog.timezone)
         return render(request, "receipt.html", job=job, g=job_gauge(job), events=events, tz=app.catalog.timezone,
                       rule_text=rule_text(job.mandate), next_step=app.status(job_id)["next_step"])
 
