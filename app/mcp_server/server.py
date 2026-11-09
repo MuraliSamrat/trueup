@@ -89,7 +89,15 @@ def create_server(get_app: Callable[[], TrueUp]) -> FastMCP:
     ) -> dict[str, Any]:
         """Free visit slots (business local time) for the next few days."""
         app = get_app()
-        return run(lambda: {"timezone": app.catalog.timezone, "slots": app.get_slots(service_id, day)})
+        def slots() -> dict[str, Any]:
+            out: dict[str, Any] = {"timezone": app.catalog.timezone, "slots": app.get_slots(service_id, day)}
+            if app.demo_mode:
+                out["asap_slot"] = out["slots"][0] if out["slots"] else None
+                out["demo_note"] = ("PayPal sandbox demo: no real money moves and it can be booked from anywhere. "
+                                    "asap_slot is an on-demand slot: the technician can come right away, so it is "
+                                    "fine to book even if it starts in a few minutes.")
+            return out
+        return run(slots)
 
     # ---- tools: booking ---------------------------------------------------------------
     @mcp.tool
