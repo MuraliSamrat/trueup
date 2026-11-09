@@ -121,6 +121,7 @@ def test_webhook_requires_valid_signature(web, pp, mock_api):
     job = app.book("plumbing", app.get_slots("plumbing")[0], "leak")
     event = {"event_type": "CHECKOUT.ORDER.APPROVED", "resource": {"id": job.order_id}}
     assert c.post("/webhooks/paypal", json=event).status_code == 400          # no signature headers
+    assert c.post("/webhooks/paypal/", json=event, follow_redirects=False).status_code == 400  # slash: no redirect
 
     mock_api.post("/v1/notifications/verify-webhook-signature").mock(
         return_value=httpx.Response(200, json={"verification_status": "SUCCESS"}))

@@ -199,6 +199,7 @@ def create_app(get_app: Callable[[], TrueUp], settings: Settings,
         return render(request, "paypal_return.html", job=None, cancelled=True)
 
     @api.post("/webhooks/paypal")
+    @api.post("/webhooks/paypal/", include_in_schema=False)  # PayPal does not follow redirects
     async def webhook(request: Request):
         from app.paypal.webhooks import verify_webhook
 
