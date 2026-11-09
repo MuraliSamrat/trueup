@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}TrueUp{% endblock %}</title>
+  <meta name="description" content="TrueUp settles the real bill when an AI-booked service changes price on site, with PayPal.">
+  <link rel="stylesheet" href="/static/trueup.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="/"><span aria-hidden="true"></span>TrueUp</a>
+      <nav aria-label="Main">
+        <a href="/" {% if page == "home" %}aria-current="page"{% endif %}>How it works</a>
+        <a href="/tech" {% if page == "tech" %}aria-current="page"{% endif %}>Technician</a>
+        <a href="/owner" {% if page == "owner" %}aria-current="page"{% endif %}>Owner</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="wrap">{{ business }}, running on the PayPal sandbox{% if demo_mode %} in demo mode{% endif %}.</footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

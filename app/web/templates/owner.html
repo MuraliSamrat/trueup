@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "_macros.html" import gauge, items_table, status %}
+{% block title %}Owner | TrueUp{% endblock %}
+{% block content %}
+<h1>Price changes to review</h1>
+{% if flash %}<div class="notice ok">{{ flash }}</div>{% endif %}
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+
+{% if not pending %}
+  <p class="lead">Nothing waiting for you. Small changes within each customer's rule were charged automatically.</p>
+{% endif %}
+
+{% for p in pending %}
+<section class="sheet" aria-labelledby="h-{{ p.job.job_id }}">
+  <div class="ticket-head">
+    <h3 id="h-{{ p.job.job_id }}">{{ p.job.service_name }}, {{ p.job.slot }}</h3>
+    <a class="small" href="/jobs/{{ p.job.job_id }}">{{ p.job.job_id }}</a>
+  </div>
+  {{ gauge(p.gauge) }}
+  {{ items_table(p.job["items"], p.job.decision.total.amount) }}
+  <ul class="reasons small">{% for r in p.job.decision.reasons %}<li>{{ r|plain }}</li>{% endfor %}</ul>
+  {% if p.job.open_questions %}<div class="notice small">Check before approving: {{ p.job.open_questions|join("; ") }}</div>{% endif %}
+  {% if p.job.photo_path %}<p class="small"><a href="/jobs/{{ p.job.job_id }}/photo">View the technician's photo</a></p>{% endif %}
+
+  <form method="post" action="/owner/jobs/{{ p.job.job_id }}/decide">
+    <label for="m-{{ p.job.job_id }}">Message to the customer (written by the AI, edit freely)</label>
+    <textarea name="message" id="m-{{ p.job.job_id }}">{{ p.message }}</textarea>
+    <p class="small muted">The customer is asked to approve ${{ p.extra }} extra at PayPal. The amount comes from the price list and can't be changed here.</p>
+    <div class="actions">
+      <button type="submit" name="decision" value="approve">Send to customer for approval</button>
+      <button type="submit" name="decision" value="reject" class="secondary">Reject, charge the booked ${{ p.job.hold.amount }} only</button>
+    </div>
+  </form>
+</section>
+{% endfor %}
+
+<h2>Ask about your money</h2>
+<form method="post" action="/owner/ask">
+  <label for="q" class="muted" style="font-weight: 400; margin-top: 0">For example: what did on-site changes add this week? Which jobs are waiting on customers?</label>
+  <textarea name="question" id="q" style="min-height: 4rem">{{ question or "" }}</textarea>
+  <div class="actions"><button type="submit">Ask</button></div>
+</form>
+{% if answer %}<div class="answer" role="status">{{ answer }}</div>{% endif %}
+
+<h2>All jobs</h2>
+{% if summary %}
+<p class="small muted">Last 7 days: {{ summary.settled_jobs }} settled, ${{ summary.total_charged }} charged, ${{ summary.net_from_on_site_changes }} from on-site changes, ${{ summary.money_on_hold_now }} on hold now.</p>
+{% endif %}
+<table>
+  <thead><tr><th>Job</th><th class="hide-sm">Visit</th><th>Status</th><th class="num">Booked</th><th class="num">Charged</th></tr></thead>
+  <tbody>
+  {% for j in jobs %}
+    <tr>
+      <td><a href="/jobs/{{ j.job_id }}">{{ j.service_name }}</a><div class="small muted">{{ j.job_id }}</div></td>
+      <td class="hide-sm">{{ j.slot }}</td>
+      <td>{{ status(j.status.value) }}</td>
+      <td class="num">${{ j.hold.amount }}</td>
+      <td class="num">{% if j.settlement %}${{ j.settlement.charged }}{% else %}<span class="muted">-</span>{% endif %}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="5" class="muted">No jobs yet. Book one through an AI assistant connected to TrueUp.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

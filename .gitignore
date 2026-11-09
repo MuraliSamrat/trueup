@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+day1_results.json
+scripts/*_result.json
+scripts/try_bill_agent_result.json
+data/trueup.db*
+data/uploads/
+CLAUDE.md
+PLAN.md

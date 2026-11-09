@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status %}
+{% block title %}Technician | TrueUp{% endblock %}
+{% block content %}
+<h1>Today's jobs</h1>
+{% if not jobs %}
+  <p class="lead">No booked jobs right now. New bookings appear here once the customer has approved the PayPal hold.</p>
+{% else %}
+  <table>
+    <thead><tr><th>Visit</th><th>Job</th><th class="hide-sm">Problem</th><th></th></tr></thead>
+    <tbody>
+    {% for j in jobs %}
+      <tr>
+        <td>{{ j.slot }}</td>
+        <td>{{ j.service_name }}<div class="small muted">{{ j.job_id }}</div></td>
+        <td class="hide-sm">{{ j.problem }}</td>
+        <td class="num"><a class="button" href="/tech/jobs/{{ j.job_id }}">Report</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

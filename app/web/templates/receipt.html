@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "_macros.html" import gauge, items_table, status %}
+{% block title %}Receipt {{ job.job_id }} | TrueUp{% endblock %}
+{% block content %}
+<div class="ticket">
+  <div class="ticket-head">
+    <span class="ticket-id">{{ job.service_name }}</span>
+    {{ status(job.status.value) }}
+  </div>
+  <p class="small" style="margin: 0.4rem 0 0">Visit {{ job.slot }} ({{ tz }}). {{ job.problem }}</p>
+  <p class="small muted" style="margin: 0.2rem 0 0">{{ job.job_id }}</p>
+</div>
+
+{% if job.settlement %}
+  <div class="notice ok">{{ job.settlement.summary }}</div>
+{% elif next_step %}
+  <div class="notice">{{ next_step }}</div>
+{% endif %}
+
+{% if g %}{{ gauge(g) }}{% endif %}
+
+{% if job["items"] %}
+<h2>What was done</h2>
+{{ items_table(job["items"], job.decision.total.amount if job.decision else None) }}
+{% if job.bill_summary %}<p style="margin-top: 1rem">{{ job.bill_summary }}</p>{% endif %}
+{% if job.owner_message %}<p class="muted">From the business: {{ job.owner_message }}</p>{% endif %}
+{% if job.decision %}<ul class="reasons small">{% for r in job.decision.reasons %}<li>{{ r|plain }}</li>{% endfor %}</ul>{% endif %}
+{% endif %}
+
+{% if job.photo_path %}
+<h2>Photo from the job</h2>
+<img class="photo" src="/jobs/{{ job.job_id }}/photo" alt="Technician's photo of the completed work">
+{% endif %}
+
+<h2>Spending rule the customer agreed to</h2>
+<p>{{ rule_text }}</p>
+<p class="small muted">Fingerprint (SHA-256): <code>{{ job.mandate_sha256 }}</code>. It is attached to every PayPal payment on this job as <code>{{ job.custom_id }}</code>, so the rule can be checked later.</p>
+
+<h2>PayPal</h2>
+<table class="small">
+  <tbody>
+    <tr><th>Booking hold order</th><td><code>{{ job.order_id }}</code></td></tr>
+    {% if job.auth_id %}<tr><th>Authorization</th><td><code>{{ job.auth_id }}</code></td></tr>{% endif %}
+    {% if job.supplemental_order_id %}<tr><th>Price change order</th><td><code>{{ job.supplemental_order_id }}</code></td></tr>{% endif %}
+    {% if job.settlement %}{% for c in job.settlement.captures %}
+      <tr><th>Capture</th><td><code>{{ c.id }}</code> {% if c.amount %}${{ c.amount.amount }}{% endif %} {{ c.status }}</td></tr>
+    {% endfor %}{% endif %}
+  </tbody>
+</table>
+
+<h2>Timeline</h2>
+<ol class="timeline">
+{% for e in events %}
+  <li><time datetime="{{ e.at }}">{{ e.at[5:16]|replace("T", " ") }}</time><span>{{ e.label }}</span></li>
+{% endfor %}
+</ol>
+{% endblock %}

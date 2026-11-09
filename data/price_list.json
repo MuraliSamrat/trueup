@@ -1,0 +1,36 @@
+{
+  "business": "Bayside Home Services",
+  "currency": "USD",
+  "items": [
+    {"sku": "VIS-STD", "name": "Standard service visit", "category": "visit", "price": "60.00", "aliases": ["call out", "visit fee", "diagnosis", "inspection"]},
+    {"sku": "VIS-EMG", "name": "After-hours emergency surcharge", "category": "emergency", "price": "45.00", "aliases": ["after hours", "night", "weekend", "urgent", "emergency"]},
+    {"sku": "LAB-30", "name": "Extra labor (30 min)", "category": "labor", "price": "35.00", "aliases": ["extra time", "additional labour", "half hour", "overtime"]},
+
+    {"sku": "PLB-WSH", "name": "Faucet washer", "category": "parts", "price": "6.00", "aliases": ["washer", "rubber washer", "seal", "drip"]},
+    {"sku": "PLB-ORG", "name": "O-ring kit", "category": "parts", "price": "8.00", "aliases": ["o ring", "oring", "gasket"]},
+    {"sku": "PLB-CRT", "name": "Faucet cartridge", "category": "parts", "price": "45.00", "aliases": ["cartridge", "valve cartridge", "mixer cartridge", "cracked cartridge"]},
+    {"sku": "PLB-SVL", "name": "Shut-off valve", "category": "parts", "price": "28.00", "aliases": ["angle stop", "isolation valve", "stop valve"]},
+    {"sku": "PLB-SUP", "name": "Braided supply line", "category": "parts", "price": "14.00", "aliases": ["supply hose", "flex line", "water line", "connector hose"]},
+    {"sku": "PLB-PTR", "name": "P-trap", "category": "parts", "price": "18.00", "aliases": ["trap", "u bend", "drain trap"]},
+    {"sku": "PLB-FLP", "name": "Toilet flapper", "category": "parts", "price": "12.00", "aliases": ["flapper", "running toilet", "toilet seal"]},
+    {"sku": "PLB-FIL", "name": "Toilet fill valve", "category": "parts", "price": "24.00", "aliases": ["fill valve", "ballcock", "float valve"]},
+    {"sku": "PLB-WAX", "name": "Toilet wax ring", "category": "parts", "price": "10.00", "aliases": ["wax ring", "toilet seal ring"]},
+    {"sku": "PLB-SNK", "name": "Drain snaking", "category": "labor", "price": "85.00", "aliases": ["snake", "unclog", "clog", "auger", "blocked drain"]},
+    {"sku": "PLB-DSP", "name": "Garbage disposal unit", "category": "parts", "price": "165.00", "aliases": ["disposal", "garbage disposer", "insinkerator"]},
+    {"sku": "PLB-WHE", "name": "Water heater element", "category": "parts", "price": "38.00", "aliases": ["heating element", "water heater element", "no hot water"]},
+    {"sku": "PLB-PRV", "name": "Pressure relief valve", "category": "parts", "price": "32.00", "aliases": ["t&p valve", "relief valve", "tpr valve"]},
+
+    {"sku": "ELE-OUT", "name": "Electrical outlet", "category": "parts", "price": "9.00", "aliases": ["socket", "receptacle", "plug point"]},
+    {"sku": "ELE-GFI", "name": "GFCI outlet", "category": "parts", "price": "26.00", "aliases": ["gfci", "gfi", "ground fault outlet"]},
+    {"sku": "ELE-SWT", "name": "Light switch", "category": "parts", "price": "8.00", "aliases": ["switch", "dimmer"]},
+    {"sku": "ELE-BRK", "name": "Circuit breaker (single pole)", "category": "parts", "price": "22.00", "aliases": ["breaker", "tripping", "mcb"]},
+    {"sku": "ELE-FIX", "name": "Light fixture install", "category": "labor", "price": "55.00", "aliases": ["fixture", "ceiling light", "lamp install"]},
+
+    {"sku": "HVC-FLT", "name": "HVAC air filter", "category": "parts", "price": "15.00", "aliases": ["air filter", "furnace filter", "ac filter"]},
+    {"sku": "HVC-CAP", "name": "AC run capacitor", "category": "parts", "price": "48.00", "aliases": ["capacitor", "ac not starting", "humming"]},
+    {"sku": "HVC-CON", "name": "AC contactor", "category": "parts", "price": "42.00", "aliases": ["contactor", "relay"]},
+    {"sku": "HVC-REF", "name": "Refrigerant recharge (per lb)", "category": "parts", "price": "75.00", "aliases": ["refrigerant", "gas top up", "freon", "recharge"]},
+    {"sku": "HVC-THR", "name": "Thermostat", "category": "parts", "price": "65.00", "aliases": ["thermostat", "temperature control"]},
+    {"sku": "HVC-CLN", "name": "Coil cleaning", "category": "labor", "price": "70.00", "aliases": ["coil clean", "condenser cleaning", "evaporator cleaning"]}
+  ]
+}

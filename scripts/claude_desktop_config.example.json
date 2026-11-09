@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "trueup": {
+      "command": "C:\\Users\\MuraliNew\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "args": ["C:\\Users\\MuraliNew\\ai-engineer\\trueup\\app\\mcp_server\\server.py"]
+    }
+  }
+}

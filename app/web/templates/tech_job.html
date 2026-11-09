@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Report {{ job.job_id }} | TrueUp{% endblock %}
+{% block content %}
+<div class="ticket">
+  <div class="ticket-head">
+    <span class="ticket-id">{{ job.service_name }}</span>
+    <span>{{ job.slot }}</span>
+  </div>
+  <p class="small" style="margin: 0.4rem 0 0">{{ job.problem }}</p>
+  <p class="small muted" style="margin: 0.2rem 0 0">Booked at ${{ job.hold.amount }}. {{ job.job_id }}</p>
+</div>
+
+{% if error %}<div class="notice">{{ error }}</div>{% endif %}
+
+<form method="post" action="/tech/jobs/{{ job.job_id }}/report" enctype="multipart/form-data" id="report">
+  <label for="rec">Voice note</label>
+  <p class="small muted">Say what you found and what you replaced. The AI matches it to the price list.</p>
+  <div class="record">
+    <button type="button" id="rec" aria-pressed="false">Start recording</button>
+    <audio id="playback" controls hidden></audio>
+  </div>
+  <input type="file" name="audio" id="audio" accept="audio/*" style="margin-top: 0.6rem" aria-label="Or upload a voice note">
+
+  <label for="note">Or type it</label>
+  <textarea name="note" id="note" placeholder="Leak was a worn washer under the sink, replaced it. Faucet cartridge was cracked, swapped it too."></textarea>
+
+  <label for="photo">Photo of the work</label>
+  <input type="file" name="photo" id="photo" accept="image/*" capture="environment">
+
+  <div class="actions">
+    <button type="submit" id="send">Send report</button>
+    <button type="submit" class="quiet" name="cancelled" value="1" formnovalidate>Job not done, release the hold</button>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+(() => {
+  const btn = document.getElementById("rec"), audioInput = document.getElementById("audio"),
+        playback = document.getElementById("playback"), form = document.getElementById("report");
+  let rec = null, chunks = [];
+  if (!navigator.mediaDevices || !window.MediaRecorder) { btn.hidden = true; return; }
+  btn.addEventListener("click", async () => {
+    if (rec && rec.state === "recording") { rec.stop(); return; }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      rec = new MediaRecorder(stream); chunks = [];
+      rec.ondataavailable = e => chunks.push(e.data);
+      rec.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        const blob = new Blob(chunks, { type: rec.mimeType || "audio/webm" });
+        const file = new File([blob], "voice-note.webm", { type: blob.type });
+        const dt = new DataTransfer(); dt.items.add(file); audioInput.files = dt.files;
+        playback.src = URL.createObjectURL(blob); playback.hidden = false;
+        btn.textContent = "Record again"; btn.classList.remove("on"); btn.setAttribute("aria-pressed", "false");
+      };
+      rec.start(); btn.textContent = "Stop recording"; btn.classList.add("on"); btn.setAttribute("aria-pressed", "true");
+    } catch (e) { btn.textContent = "Microphone not available"; btn.disabled = true; }
+  });
+  form.addEventListener("submit", () => {
+    const send = document.getElementById("send");
+    send.disabled = true; send.textContent = "Pricing the work...";
+  });
+})();
+</script>
+{% endblock %}

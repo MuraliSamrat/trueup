@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from "_macros.html" import gauge %}
+{% block content %}
+<h1>Your AI booked the plumber. TrueUp settles the real bill.</h1>
+<p class="lead">AI assistants can book a service, but the price of a repair is rarely known until someone opens the cabinet. TrueUp holds the quoted amount with PayPal, turns the technician's voice note into priced items, and settles the final bill inside the limits the customer agreed to.</p>
+
+<div class="sheet">
+  <h3>A $60 visit that became $111</h3>
+  <p class="small muted">A worn washer ($6) would have been charged automatically. The cracked cartridge ($45) took the bill past the limit, so the owner and then the customer approved it.</p>
+  {{ gauge(example) }}
+</div>
+
+<h2>What happens on every job</h2>
+<ol class="flow">
+  <li><div><h3>The customer's assistant books</h3><p>Through TrueUp's MCP server, an assistant like Claude finds a slot and books. The customer approves a PayPal hold for the visit price and picks a rule for extra costs.</p></div></li>
+  <li><div><h3>The technician reports what was done</h3><p>A voice note and a photo from the job. An AI agent matches the work to the price list. It picks items; prices come from the list, never from the model.</p></div></li>
+  <li><div><h3>The bill settles itself, or asks</h3><p>Lower or equal: charge the real amount. Up to PayPal's limit of 115% of the hold and within the customer's rule: charge automatically. Above it: the owner approves, then the customer approves the extra at PayPal. Cancelled: the hold is released.</p></div></li>
+</ol>
+
+<h2>Connect an assistant</h2>
+<p>Add this MCP server to Claude or any MCP client:</p>
+<p><code>{{ mcp_url }}</code></p>
+<p class="small muted">Tools: list_services, get_slots, book_visit, wait_for_paypal_approval, confirm_booking, get_job_status, view_price_change, approve_price_change, decline_price_change, cancel_booking.</p>
+{% endblock %}

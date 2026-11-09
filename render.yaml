@@ -1,0 +1,27 @@
+# Render Blueprint: one web service serving the pages, the PayPal return/webhook endpoints and /mcp.
+# Render -> New -> Blueprint -> pick this repo. Secrets marked sync:false are asked for at deploy time.
+services:
+  - type: web
+    name: trueup
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:build_web --factory --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips "*"
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.11"
+      - key: PAYPAL_ENV
+        value: sandbox
+      - key: DEMO_MODE
+        value: "true"
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: STAFF_PASSWORD
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false

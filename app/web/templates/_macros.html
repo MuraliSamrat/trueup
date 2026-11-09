@@ -1,0 +1,44 @@
+{% macro gauge(g) -%}
+<figure class="gauge" aria-label="{{ g.caption }}">
+  <div class="gauge-track">
+    <div class="gauge-zone zone-hold" style="width: {{ g.hold_pct }}%"></div>
+    <div class="gauge-zone zone-auto" style="left: {{ g.hold_pct }}%; width: {{ g.auto_pct - g.hold_pct }}%"></div>
+    {% for s in g.segments %}<div class="gauge-fill {{ s.cls }}" style="left: {{ s.left }}%; width: {{ s.width }}%"></div>{% endfor %}
+    <div class="gauge-tick" style="left: {{ g.hold_pct }}%"></div>
+    <div class="gauge-tick" style="left: {{ g.auto_pct }}%"></div>
+  </div>
+  <div class="gauge-legend" aria-hidden="true">
+    <span class="start" style="left: 0">Booked<b>${{ g.hold }}</b></span>
+    <span style="left: {{ g.auto_pct }}%">Auto limit<b>${{ g.auto }}</b></span>
+    {% if g.total_pct > g.auto_pct + 12 %}<span class="end" style="left: {{ g.total_pct }}%">Final<b>${{ g.total }}</b></span>{% endif %}
+  </div>
+  <div class="gauge-key" aria-hidden="true">
+    <span><i style="background: var(--ink)"></i>Within the booked hold</span>
+    <span><i style="background: var(--teal)"></i>Charged automatically</span>
+    <span><i style="background: var(--amber)"></i>Needs approval</span>
+  </div>
+  <figcaption class="gauge-note">{{ g.caption }}</figcaption>
+</figure>
+{%- endmacro %}
+
+{% macro items_table(items, total=None) -%}
+<table>
+  <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Price</th><th class="num hide-sm">Line total</th></tr></thead>
+  <tbody>
+  {% for i in items %}
+    <tr class="{{ 'added' if i.added }}">
+      <td>{{ i.name }}{% if i.description and i.added %}<div class="small muted">{{ i.description }}</div>{% endif %}</td>
+      <td class="num">{{ i.quantity }}</td>
+      <td class="num">${{ i.unit_amount.amount }}</td>
+      <td class="num hide-sm">${{ "%.2f"|format(i.unit_amount.amount|float * i.quantity) }}</td>
+    </tr>
+  {% endfor %}
+  {% if total %}<tr class="total"><td colspan="2">Total</td><td class="num" colspan="2">${{ total }}</td></tr>{% endif %}
+  </tbody>
+</table>
+{%- endmacro %}
+
+{% macro status(s) -%}
+<span class="status {{ s }}">{{ {"AWAITING_HOLD": "Waiting for hold", "BOOKED": "Booked", "AWAITING_OWNER": "Owner reviewing",
+  "AWAITING_CUSTOMER": "Customer approving", "SETTLED": "Settled", "CANCELLED": "Cancelled"}.get(s, s) }}</span>
+{%- endmacro %}

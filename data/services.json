@@ -1,0 +1,15 @@
+{
+  "business": "Bayside Home Services",
+  "area": "San Francisco Bay Area",
+  "timezone": "America/Los_Angeles",
+  "slot_times": ["09:00", "11:00", "14:00", "16:00"],
+  "days_ahead": 5,
+  "services": [
+    {"id": "plumbing", "name": "Plumber visit", "booking_sku": "VIS-STD", "price": "60.00",
+     "description": "Leaks, drips, clogs, toilets, faucets, water heaters. Parts are extra and priced from our list."},
+    {"id": "electrical", "name": "Electrician visit", "booking_sku": "VIS-STD", "price": "60.00",
+     "description": "Outlets, switches, breakers, light fixtures. Parts are extra and priced from our list."},
+    {"id": "hvac", "name": "AC / heating visit", "booking_sku": "VIS-STD", "price": "60.00",
+     "description": "AC not cooling, heating issues, filters, thermostats. Parts are extra and priced from our list."}
+  ]
+}

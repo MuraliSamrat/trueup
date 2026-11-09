@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}PayPal | TrueUp{% endblock %}
+{% block content %}
+{% if cancelled %}
+  <h1>Nothing was approved.</h1>
+  <p class="lead">You closed PayPal without approving. You can go back to your assistant and try again, or decline the change there.</p>
+{% elif job %}
+  <h1>{{ headline }}</h1>
+  <p class="lead">{{ detail }}</p>
+  <p>You can close this tab and go back to your assistant. <a href="/jobs/{{ job.job_id }}">See the receipt for {{ job.job_id }}</a>.</p>
+{% else %}
+  <h1>Approved at PayPal.</h1>
+  <p class="lead">Go back to your assistant to finish.</p>
+{% endif %}
+{% endblock %}
