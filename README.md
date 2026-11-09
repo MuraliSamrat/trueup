@@ -15,8 +15,8 @@ TrueUp is the missing piece. It holds the quoted amount with PayPal, turns the t
 
 The automatic limit is PayPal's own: an authorization can be captured up to **115% of the authorized amount, at most $75 more**. TrueUp turns that rule, plus the customer's own spending rule, into a decision engine.
 
-- **Live demo:** `https://<your-app>.onrender.com` (sandbox)
-- **MCP server:** `https://<your-app>.onrender.com/mcp`
+- **Live demo:** https://trueup-gi6e.onrender.com (PayPal sandbox; the free instance may take ~50 s to wake up)
+- **MCP server:** `https://trueup-gi6e.onrender.com/mcp` (add it to Claude or any MCP client as a custom connector)
 - **Video:** `<YouTube link>`
 
 ## How it works
