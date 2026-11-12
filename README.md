@@ -17,7 +17,7 @@ The automatic limit is PayPal's own: an authorization can be captured up to **11
 
 - **Live demo:** https://trueup-gi6e.onrender.com (PayPal sandbox; the free instance may take ~50 s to wake up)
 - **MCP server:** `https://trueup-gi6e.onrender.com/mcp` (add it to Claude or any MCP client as a custom connector)
-- **Video:** `<YouTube link>`
+- **Video (2:20):** https://youtu.be/orMGrZlgmQk
 
 ## How it works
 
