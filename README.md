@@ -69,6 +69,7 @@ Details that make it safe with real money:
 | Owner agent | `HumanInTheLoopMiddleware` + SQLite checkpointer | Drafts the message to the customer, then pauses until the owner approves, edits or rejects. Its tool has no amount argument: the amount comes from the decision engine |
 | Ledger agent | Read-only tools over the job store | The owner asks "what did on-site changes add this week?"; numbers come from code |
 | Speech to text | OpenAI transcription (`gpt-4o-mini-transcribe`, fallback `whisper-1`) | Technician voice notes |
+| Models | OpenAI `gpt-4.1-mini`, fallback `gpt-4o-mini` (configurable) | All three agents; the customer's side is any MCP client, demoed with Claude |
 
 ## MCP server
 
@@ -97,6 +98,10 @@ uvicorn app.main:build_web --factory --port 8000
 - Claude Desktop (stdio): see `scripts/claude_desktop_config.example.json`
 - Terminal tools: `python scripts/ops.py jobs | report | owner | receipt`
 - Live sandbox check of all three paths: `python scripts/sandbox_paths.py`
+
+## Deploy (Render)
+
+The live demo runs on [Render](https://render.com) from the Blueprint in `render.yaml`: one free web service serving the pages, the PayPal return and webhook endpoints, and the MCP server at `/mcp`. Render -> New -> Blueprint -> this repo, then set `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `OPENAI_API_KEY`, `STAFF_PASSWORD` and `PAYPAL_WEBHOOK_ID` as environment variables. `RENDER_EXTERNAL_URL` is picked up automatically for PayPal's return URLs. Every push to `main` redeploys.
 
 ## Tests
 
